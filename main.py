@@ -6,22 +6,37 @@ import json
 import os
 import time
 from dotenv import load_dotenv
+import sys
 
-# Load environment variables from .env file
+# Load environment variables from .env file (for local development)
+# In GitHub Actions, secrets are automatically available as environment variables
 load_dotenv()
-
-# URL to monitor
-URL = os.getenv("URL", "") 
 
 # File to store known listing IDs
 KNOWN_LISTINGS_FILE = "known_listings.json"
 
-# Telegram Bot configuration
+# Load configuration from GitHub Secrets (or .env file for local development)
+# GitHub Secrets are automatically exposed as environment variables in GitHub Actions
+def get_required_env(key, description=""):
+    """Get a required environment variable, raise error if not set."""
+    value = os.getenv(key)
+    if not value:
+        error_msg = f"Required environment variable '{key}' is not set."
+        if description:
+            error_msg += f" {description}"
+        print(f"ERROR: {error_msg}")
+        print(f"Please set this as a GitHub Secret or in your .env file.")
+        sys.exit(1)
+    return value
+
+# URL to monitor (from GitHub Secrets)
+URL = get_required_env("URL", "The Kufar URL to monitor for new listings")
+
+# Telegram Bot configuration (from GitHub Secrets)
 # Get your bot token from @BotFather on Telegram
 # Get your chat ID by messaging @userinfobot on Telegram
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
-print(TELEGRAM_CHAT_ID)
+TELEGRAM_BOT_TOKEN = get_required_env("TELEGRAM_BOT_TOKEN", "Telegram bot token from @BotFather")
+TELEGRAM_CHAT_ID = get_required_env("TELEGRAM_CHAT_ID", "Your Telegram chat ID from @userinfobot")
 
 def get_all_listings():
     """
