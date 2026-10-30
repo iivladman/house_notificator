@@ -29,6 +29,7 @@ jobs:
         env:
           # Map your Secrets to environment variables
           URL: ${{ secrets.URL }}
+          URL_2: ${{ secrets.URL_2 }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
@@ -39,7 +40,7 @@ jobs:
           git config --global user.email "actions@github.com"
           
           # Check if known_listings.json changed
-          git add known_listings.json
+          git add known_listings.json known_listings_realt.json
           
           # Only commit if there are changes (prevents errors if no new houses found)
           git commit -m "Update known listings [skip ci]" || exit 0
