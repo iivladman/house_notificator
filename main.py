@@ -127,6 +127,9 @@ def get_page_listings_realt(url):
 
     listing_links = soup.find_all("a", href=re.compile(r"/object/\d+"))
 
+    # Category from the search URL (11 = cottages), used in short links that open in the mobile app
+    category = parse_qs(urlparse(url).query).get("category", ["11"])[0]
+
     listings = {}
     for link in listing_links:
         href = link.get("href", "")
@@ -134,10 +137,7 @@ def get_page_listings_realt(url):
         if match:
             listing_id = int(match.group(1))
             listing_title = link.get_text(strip=True)
-            if href.startswith("http"):
-                listing_url = href.split("?")[0]
-            else:
-                listing_url = "https://realt.by" + href.split("?")[0]
+            listing_url = f"https://realt.by/s/o/{category}/{listing_id}"
             listings[listing_id] = (listing_title, listing_url)
 
     return listings
